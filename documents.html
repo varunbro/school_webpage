@@ -68,6 +68,12 @@
       cursor: pointer;
       font-weight: 600;
     }
+    .message {
+      margin-top: 40px;
+      text-align: center;
+      color: var(--primary-color);
+      font-weight: 600;
+    }
     footer {
       background-color: var(--primary-color);
       color: white;
@@ -93,9 +99,8 @@
   <h1>Documents & Certificates</h1>
   <p>Below is a list of our key documents and certificates. Click download to save the file.</p>
 
-  <div id="doc-list">
-    <!-- JavaScript will populate this list -->
-  </div>
+  <div id="doc-list"></div>
+  <div id="no-docs" class="message" style="display:none;">No documents available.</div>
 </main>
 
 <footer>
@@ -104,19 +109,26 @@
 
 <script>
   async function loadDocuments() {
+    const container = document.getElementById('doc-list');
+    const noDocs = document.getElementById('no-docs');
     try {
-      const response = await fetch('docs/certificates/index.json');
+      const response = await fetch('./docs/certificates/index.json');
+      if (!response.ok) throw new Error('Manifest not found');
       const files = await response.json();
-      const container = document.getElementById('doc-list');
+      if (!files.length) {
+        noDocs.style.display = 'block';
+        return;
+      }
       files.forEach(file => {
         const item = document.createElement('div');
         item.className = 'doc-item';
 
+        // Format name: replace hyphens/underscores and drop extension
         const name = file.replace(/[-_]/g, ' ').replace(/\.[^.]+$/, '');
         const label = name.charAt(0).toUpperCase() + name.slice(1);
 
         const link = document.createElement('a');
-        link.href = `docs/certificates/${file}`;
+        link.href = `./docs/certificates/${file}`;
         link.download = file;
         link.textContent = label;
         item.appendChild(link);
@@ -131,6 +143,8 @@
       });
     } catch (err) {
       console.error('Error loading documents:', err);
+      noDocs.textContent = 'Unable to load documents.';
+      noDocs.style.display = 'block';
     }
   }
   loadDocuments();
