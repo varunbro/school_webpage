@@ -3,78 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Name - Home</title>
+    <title>GS Global Academy - Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #C41E3A; /* School red theme */
-            --accent-color: #FFD700;
+            --primary-color: #E57373; /* lighter red theme */
+            --accent-color: #FFB74D;  /* soft gold accent */
             --text-color: #333;
-            --bg-color: #f9f9f9;
+            --bg-color: #fff5f5;     /* very light pink */
         }
         body {
             font-family: 'Open Sans', sans-serif;
             margin: 0;
             padding: 0;
+            background-image: url('images/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             background-color: var(--bg-color);
             color: var(--text-color);
         }
         header {
             background-color: var(--primary-color);
             color: white;
-            padding: 10px 20px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         header img {
-            height: 50px;
+            height: 120px; /* logo size increased */
         }
         nav a {
             color: white;
             text-decoration: none;
-            margin: 0 10px;
+            margin: 0 15px;
             font-weight: 600;
         }
         .hero {
-            /* use local image folder */
-            background-image: url('images/hero.jpg');
-            background-size: cover;
-            background-position: center;
             text-align: center;
             color: white;
-            padding: 80px 20px;
+            padding: 100px 20px;
+            background-color: rgba(0, 0, 0, 0.4); /* overlay on background image */
         }
         .hero h1 {
-            font-size: 40px;
+            font-size: 44px;
             margin-bottom: 20px;
             font-family: 'Montserrat', sans-serif;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-        }
-        .btn {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
         section {
-            padding: 40px 20px;
+            padding: 50px 20px;
             text-align: center;
-        }
-        .cards {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .card {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            width: 250px;
+            background-color: rgba(255, 255, 255, 0.8);
         }
         footer {
             background-color: var(--primary-color);
@@ -87,9 +68,8 @@
 </head>
 <body>
 
-<!-- Images in /images folder, documents in /docs folder -->
 <header>
-    <img src="images/logo.png" alt="School Logo">
+    <img src="images/logo.png" alt="GS Global Academy Logo">
     <nav>
         <a href="#">Home</a>
         <a href="#">Documents & Certificates</a>
@@ -100,32 +80,15 @@
 <div class="hero">
     <h1>Welcome to GS Global Academy</h1>
     <p>Shaping Futures Together</p>
-    <a class="btn" href="#">View Documents</a>
 </div>
 
 <section>
     <h2>About Our School</h2>
-    <p>[School Name] is dedicated to nurturing every student’s potential with excellence and care.</p>
-    <a class="btn" href="#">Read More</a>
-</section>
-
-<section>
-    <div class="cards">
-        <div class="card">
-            <h3>Documents & Certificates</h3>
-            <p>Download important files from our <code>/docs/</code> directory.</p>
-            <a class="btn" href="docs/">Download Now</a>
-        </div>
-        <div class="card">
-            <h3>Image Gallery</h3>
-            <p>Browse our gallery in the <code>/images/</code> folder.</p>
-            <a class="btn" href="images/">View Gallery</a>
-        </div>
-    </div>
+    <p>Established in 1995, GS Global Academy is a co-educational institution committed to academic excellence and holistic development. Nestled in the heart of the city, our campus offers modern facilities, dedicated faculty, and a nurturing environment where students are encouraged to explore, innovate, and lead.</p>
 </section>
 
 <footer>
-    <p>&copy; 2024 [School Name]. All Rights Reserved.</p>
+    <p>&copy; 2024 GS Global Academy. All Rights Reserved.</p>
 </footer>
 
 </body>
