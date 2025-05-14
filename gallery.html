@@ -13,74 +13,25 @@
       --bg-color: #fff5f5;
     }
     * { box-sizing: border-box; }
-    body {
-      font-family: 'Open Sans', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-    }
-    header {
-      background-color: var(--primary-color);
-      color: white;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    body { font-family: 'Open Sans', sans-serif; margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); }
+    header { background-color: var(--primary-color); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
     header img { height: 120px; }
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin: 0 15px;
-      font-weight: 600;
-    }
-    main {
-      max-width: 1200px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-    h1 { font-family: 'Montserrat', sans-serif; font-size: 32px; text-align: center; }
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-top: 30px;
-    }
-    .gallery-item {
-      position: relative;
-      overflow: hidden;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    .gallery-item img {
-      width: 100%;
-      height: auto;
-      display: block;
-      transition: transform 0.3s ease;
-      cursor: pointer;
-    }
-    .gallery-item img:hover {
-      transform: scale(1.05);
-    }
-    #no-images {
-      margin-top: 40px;
-      text-align: center;
-      color: var(--primary-color);
-      font-weight: 600;
-    }
-    footer {
-      background-color: var(--primary-color);
-      color: white;
-      padding: 20px;
-      text-align: center;
-      font-size: 14px;
-      margin-top: 60px;
-    }
+    nav a { color: white; text-decoration: none; margin: 0 15px; font-weight: 600; }
+    main { max-width: 900px; margin: 40px auto; padding: 0 20px; text-align: center; }
+    h1 { font-family: 'Montserrat', sans-serif; font-size: 32px; }
+    .slideshow-container { position: relative; max-width: 100%; margin: 20px auto; }
+    .slideshow-container img#mainImage { width: 100%; border-radius: 8px; }
+    .nav-btn { position: absolute; top: 50%; background-color: rgba(0,0,0,0.5); color: white; border: none; padding: 12px; font-size: 18px; cursor: pointer; transform: translateY(-50%); }
+    #prevBtn { left: 10px; }
+    #nextBtn { right: 10px; }
+    .thumbnail-strip { display: flex; overflow-x: auto; gap: 10px; padding: 10px 0; justify-content: center; }
+    .thumbnail-strip img { width: 100px; height: 60px; object-fit: cover; cursor: pointer; opacity: 0.6; border-radius: 4px; transition: opacity 0.3s; }
+    .thumbnail-strip img.active { opacity: 1; border: 2px solid var(--primary-color); }
+    #no-images { margin-top: 40px; color: var(--primary-color); font-weight: 600; }
+    footer { background-color: var(--primary-color); color: white; padding: 20px; text-align: center; font-size: 14px; margin-top: 60px; }
   </style>
 </head>
 <body>
-
 <header>
   <img src="images/logo.png" alt="GS Global Academy Logo">
   <nav>
@@ -89,53 +40,69 @@
     <a href="gallery.html">Gallery</a>
   </nav>
 </header>
-
 <main>
   <h1>Image Gallery</h1>
-  <div class="gallery-grid" id="gallery"></div>
+  <div class="slideshow-container">
+    <button id="prevBtn" class="nav-btn">&#10094;</button>
+    <img id="mainImage" src="" alt="Main Image">
+    <button id="nextBtn" class="nav-btn">&#10095;</button>
+  </div>
+  <div class="thumbnail-strip" id="thumbnails"></div>
   <div id="no-images" style="display:none;">No images available.</div>
 </main>
-
 <footer>
   <p>&copy; 2024 GS Global Academy. All Rights Reserved.</p>
 </footer>
-
 <script>
-  // Configure these variables
   const repoOwner = 'YOUR_GITHUB_USERNAME';
   const repoName  = 'YOUR_REPO_NAME';
-  const dirPath   = 'Website/images'; // path in repo to your images folder
+  const dirPath   = 'images';
+  let images = [];
+  let currentIndex = 0;
 
   async function loadGallery() {
-    const gallery = document.getElementById('gallery');
+    const gallery = document.getElementById('thumbnails');
     const noImages = document.getElementById('no-images');
     try {
       const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${dirPath}`;
       const response = await fetch(apiUrl);
       if (!response.ok) throw new Error('Could not fetch image directory');
       const files = await response.json();
-      const images = files.filter(f => f.type === 'file' && /(\.jpe?g|\.png|\.webp|\.gif)$/i.test(f.name));
-      if (!images.length) {
-        noImages.style.display = 'block';
-        return;
-      }
-      images.forEach(file => {
-        const item = document.createElement('div');
-        item.className = 'gallery-item';
-        const img = document.createElement('img');
-        img.src = file.download_url;
-        img.alt = file.name.replace(/[-_]/g, ' ').replace(/\.[^.]+$/, '');
-        img.onclick = () => window.open(file.download_url, '_blank');
-        item.appendChild(img);
-        gallery.appendChild(item);
+      images = files.filter(f => f.type === 'file' && /\.(jpe?g|png|webp|gif)$/i.test(f.name))
+                    .map(f => ({ name: f.name, url: f.download_url }));
+      if (!images.length) { noImages.style.display = 'block'; return; }
+      images.forEach((imgObj, idx) => {
+        const thumb = document.createElement('img');
+        thumb.src = imgObj.url;
+        thumb.alt = imgObj.name.replace(/[-_]/g, ' ').replace(/\.[^.]+$/, '');
+        thumb.onclick = () => showImage(idx);
+        gallery.appendChild(thumb);
       });
+      showImage(0);
     } catch (err) {
       console.error('Error loading gallery:', err);
       noImages.style.display = 'block';
     }
   }
+
+  function showImage(index) {
+    currentIndex = index;
+    const mainImg = document.getElementById('mainImage');
+    const thumbs = document.getElementById('thumbnails').children;
+    mainImg.src = images[index].url;
+    for (let i = 0; i < thumbs.length; i++) {
+      thumbs[i].classList.toggle('active', i === index);
+    }
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    if (currentIndex > 0) showImage(currentIndex - 1);
+  });
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    if (currentIndex < images.length - 1) showImage(currentIndex + 1);
+  });
+
   loadGallery();
 </script>
-
 </body>
 </html>
