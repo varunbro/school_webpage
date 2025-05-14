@@ -1,12 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Gallery</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GS Global Academy - Gallery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #E57373;
+      --accent-color: #FFB74D;
+      --text-color: #333;
+      --bg-color: #fff5f5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Open Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+    header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header img { height: 120px; }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: 600;
+    }
+    main {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    h1 { font-family: 'Montserrat', sans-serif; font-size: 32px; text-align: center; }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 30px;
+    }
+    .gallery-item {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .gallery-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+    .gallery-item img:hover {
+      transform: scale(1.05);
+    }
+    #no-images {
+      margin-top: 40px;
+      text-align: center;
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+    footer {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 14px;
+      margin-top: 60px;
+    }
+  </style>
 </head>
 <body>
-    <h2>School Gallery</h2>
-    <img src="assets/images/image1.jpg" alt="School image 1">
-    <img src="assets/images/image2.jpg" alt="School image 2">
+
+<header>
+  <img src="images/logo.png" alt="GS Global Academy Logo">
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="documents.html">Documents & Certificates</a>
+    <a href="gallery.html">Gallery</a>
+  </nav>
+</header>
+
+<main>
+  <h1>Image Gallery</h1>
+  <div class="gallery-grid" id="gallery"></div>
+  <div id="no-images" style="display:none;">No images available.</div>
+</main>
+
+<footer>
+  <p>&copy; 2024 GS Global Academy. All Rights Reserved.</p>
+</footer>
+
+<script>
+  // Configure these variables
+  const repoOwner = 'YOUR_GITHUB_USERNAME';
+  const repoName  = 'YOUR_REPO_NAME';
+  const dirPath   = 'Website/images'; // path in repo to your images folder
+
+  async function loadGallery() {
+    const gallery = document.getElementById('gallery');
+    const noImages = document.getElementById('no-images');
+    try {
+      const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${dirPath}`;
+      const response = await fetch(apiUrl);
+      if (!response.ok) throw new Error('Could not fetch image directory');
+      const files = await response.json();
+      const images = files.filter(f => f.type === 'file' && /(\.jpe?g|\.png|\.webp|\.gif)$/i.test(f.name));
+      if (!images.length) {
+        noImages.style.display = 'block';
+        return;
+      }
+      images.forEach(file => {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        const img = document.createElement('img');
+        img.src = file.download_url;
+        img.alt = file.name.replace(/[-_]/g, ' ').replace(/\.[^.]+$/, '');
+        img.onclick = () => window.open(file.download_url, '_blank');
+        item.appendChild(img);
+        gallery.appendChild(item);
+      });
+    } catch (err) {
+      console.error('Error loading gallery:', err);
+      noImages.style.display = 'block';
+    }
+  }
+  loadGallery();
+</script>
+
 </body>
 </html>
